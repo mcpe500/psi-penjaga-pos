@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel for Battleship</title>
+    <script src="./html5-qrcode.min.v2.3.0.js"></script>
+</head>
+
+<body>
+    <button class="reload-button" onclick="reload()">RELOAD</button>
+    <div id="reader"></div>
+    <div class="data-team1">1</div>
+    <div class="data-team2">2s</div>
+    <script>
+        function reload() {
+            fetch('https://4dfa-139-255-65-92.ngrok-free.app/battleshipadmindata', {
+                method: 'GET'
+            }).then(response => {
+                if (response.ok) {
+                    console.log('Data submitted successfully');
+                } else {
+                    console.error('Failed to submit data');
+                }
+                return response.json()
+            }).then((data) => {
+                console.log(data)
+            }).catch(error => {
+                console.error('Error:', error);
+            });
+        }
+        let [qr, clickedCell, cellPosition] = [null, null, null];
+
+        function onScanSuccess(decodedText, decodedResult) {
+            qr = decodedText;
+        }
+
+        function onScanError(errorMessage) {
+            console.error(errorMessage);
+        }
+
+        var html5QrcodeScanner = new Html5QrcodeScanner(
+            "reader", { fps: 10, qrbox: 250 }
+        );
+
+        html5QrcodeScanner.render(onScanSuccess, onScanError);
+    </script>
+</body>
+
+</html>
