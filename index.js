@@ -2,7 +2,7 @@ const express = require("express");
 const path = require("path");
 const { generateQR, addPoints, decodeQR } = require("./qr");
 const { serverURL, admin_password } = require("./env.json");
-const { Apollo, Vanguard, Titan, Falcon } = require("./data");
+const { Apollo, Vanguard, Titan, Falcon } = require("./data.json");
 const cors = require('cors');
 
 const app = express();
@@ -13,21 +13,20 @@ app.use(express.json({ limit: "100mb" }));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 
-let cell = null;
-
 app.get("/get-example-qr", async (req, res) => {
     try {
-        const qr = await addPoints();
-        const allTeams = [
+        const qrPromises = [
             ...Apollo.map(team => ({ name: team.name, points: team.points, qr: generateQR(team.name) })),
             ...Vanguard.map(team => ({ name: team.name, points: team.points, qr: generateQR(team.name) })),
             ...Titan.map(team => ({ name: team.name, points: team.points, qr: generateQR(team.name) })),
             ...Falcon.map(team => ({ name: team.name, points: team.points, qr: generateQR(team.name) }))
         ];
 
+        const allTeams = await Promise.all(qrPromises);
+
         let final = "<html><head><style>body { font-family: Arial, sans-serif; }</style></head><body>";
         for (const team of allTeams) {
-            const { name, points, qr } = await team;
+            const { name, points, qr } = team;
             final += `<div style="margin-bottom: 40px;">
                 <h2>${name}</h2>
                 <p>Points: ${points}</p>
@@ -35,7 +34,6 @@ app.get("/get-example-qr", async (req, res) => {
             </div>`;
         }
         final += "</body></html>";
-
         res.send(final);
     } catch (error) {
         console.error(error);
@@ -43,51 +41,55 @@ app.get("/get-example-qr", async (req, res) => {
     }
 });
 
-
 app.get("/adminpanel", async (req, res) => {
-    res.sendFile(__dirname + '/adminpanel.html');
-})
+    res.sendFile(path.join(__dirname, 'adminpanel.html'));
+});
 
 app.get("/battleship", async (req, res) => {
-    res.sendFile(__dirname + '/battleship.html');
-})
+    res.sendFile(path.join(__dirname, 'battleship.html'));
+});
 
 app.post("/battleshipdata", async (req, res) => {
-    console.log(req.body)
+    console.log(req.body);
     const { qrCode, cell } = req.body;
-    // if()
-})
+    // Process the battleship data
+});
 
 app.get("/battleshipadmin", async (req, res) => {
-    res.sendFile(__dirname + '/battleshipadmin.html');
-})
+    res.sendFile(path.join(__dirname, 'battleshipadmin.html'));
+});
 
 app.get("/battleshipadmindata", async (req, res) => {
-    res.send({ d: "masuk gan" })
-})
+    res.send({ d: "masuk gan" });
+});
+
 app.get("/instascan.min.js", async (req, res) => {
-    res.sendFile(__dirname + '/instascan.min.js');
-})
+    res.sendFile(path.join(__dirname, 'instascan.min.js'));
+});
+
 app.get("/html5-qrcode.min.v2.3.0.js", async (req, res) => {
-    res.sendFile(__dirname + '/html5-qrcode.min.v2.3.0.js');
-})
+    res.sendFile(path.join(__dirname, 'html5-qrcode.min.v2.3.0.js'));
+});
+
 app.get("/data.json", async (req, res) => {
-    res.sendFile(__dirname + '/data.json');
-})
+    res.sendFile(path.join(__dirname, 'data.json'));
+});
 
 app.post("/adminpanel", async (req, res) => {
-    // console.log(req.body);
     const { qrCode, winner, password } = req.body;
     console.log(req.body);
-    if (password != admin_password) {
-        return res.status(400).send("salah password");
+    if (password !== admin_password) {
+        return res.status(400).send("Incorrect password");
     }
-    addPoints(qrCode, 10);
-    // let dec = await decodeQR(qrCode);
-    // console.log(dec)
-    res.send();
-    // res.sendFile(__dirname + '/adminpanel.html');
-})
+    if (winner == 'win') {
+        addPoints(qrCode, 100);
+    } else if (winner == 'draw') {
+        addPoints(qrCode, 60);
+    } else if (winner == 'lose') {
+        addPoints(qrCode, 40);
+    }
+    return res.send("Points have been updated");
+});
 
 const PORT = 3000;
 app.listen(PORT, () => {

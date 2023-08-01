@@ -1,7 +1,6 @@
 const qrcode = require("qrcode");
 const fs = require('fs');
 const Jimp = require('jimp');
-const sharp = require('sharp');
 const qrCodeReader = require('qrcode-reader');
 
 module.exports = {

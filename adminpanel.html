@@ -82,8 +82,9 @@
     <h2>Scan QR Code</h2>
     <div id="reader"></div>
 
-    <h2>Select Winner or Loser</h2>
+    <h2>Select Winner or Draw or Loser</h2>
     <button id="winnerButton" onclick="selectWinner()">Winner</button>
+    <button id="drawButton" onclick="selectDraw()">Draw</button>
     <button id="loserButton" onclick="selectLoser()">Loser</button>
 
     <h2>Enter Password</h2>
@@ -92,12 +93,14 @@
     <div class="submit-container">
         <button onclick="submitData()">Submit</button>
     </div>
+    <h1 id="status"></h1>
 
     <script>
         let [qr, win] = [null, null];
 
         function onScanSuccess(decodedText, decodedResult) {
             qr = decodedText;
+            document.getElementById("reader").innerHTML = `${qr}`
         }
 
         function onScanError(errorMessage) {
@@ -109,13 +112,14 @@
         html5QrcodeScanner.render(onScanSuccess, onScanError);
 
         function selectWinner() {
-            win = 'true';
+            win = 'win';
         }
-
+        function selectDraw() {
+            win = 'draw';
+        }
         function selectLoser() {
-            win = 'false';
+            win = 'lose';
         }
-
         function submitData() {
             let qrCodeValue = qr;
             sendFormData();
@@ -124,25 +128,32 @@
                 let winnerFlag = win;
                 let password = document.getElementById('passwordInput').value;
 
-                fetch('https://4dfa-139-255-65-92.ngrok-free.app/adminpanel', {
+                fetch('https://mcpe500-legendary-space-disco-55r95jp76652767x-3000.preview.app.github.dev/adminpanel', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         qrCode: qrCodeValue,
-                        winner: (winnerFlag === 'true'),
+                        winner: winnerFlag,
                         password: password
                     })
-                }).then(response => {
-                    if (response.ok) {
-                        console.log('Data submitted successfully');
-                    } else {
-                        console.error('Failed to submit data');
-                    }
-                }).catch(error => {
-                    console.error('Error:', error);
-                });
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            console.log('Data submitted successfully');
+                            return response.text(); // Parse response body as text
+                        } else {
+                            throw new Error('Failed to submit data');
+                        }
+                    })
+                    .then(responseText => {
+                        console.log(responseText);
+                        document.getElementById("status").innerText = responseText;
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
             }
         }
     </script>
