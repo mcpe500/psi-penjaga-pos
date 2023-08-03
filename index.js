@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require("path");
 const { generateQR, addPoints, decodeQR } = require("./qr");
-const { serverURL, admin_password } = require("./env.json");
+const { serverURL, admin_password, pos1,pos2,pos3,pos4,pos5,pos6,pos7,pos8,pos9,pos10 } = require("./env.json");
 const { Apollo, Vanguard, Titan, Falcon } = require("./data.json");
 const cors = require('cors');
 
@@ -42,9 +42,9 @@ app.get("/get-example-qr", async (req, res) => {
 });
 
 app.get("/points", async (req, res) => {
-    let final = "<table><thead><tr><th>id</th><th>kelompok</th><th>tim</th><th>history</th></tr></thead><tbody><tr>";
+    let final = "<table border='1'><thead><tr><th>id</th><th>kelompok</th><th>tim</th><th>history</th><th>Points</th></tr></thead><tbody><tr>";
 
-    const qrPromises = [
+    const allTeams = [
         ...Apollo.map(team => ({ name: team.name, points: team.points, history: team.history, bigTeam: "Apollo" })),
         ...Vanguard.map(team => ({ name: team.name, points: team.points, history: team.history, bigTeam: "Vanguard" })),
         ...Titan.map(team => ({ name: team.name, points: team.points, history: team.history, bigTeam: "Titan" })),
@@ -52,7 +52,7 @@ app.get("/points", async (req, res) => {
     ];
     let ctr = 1;
     for (const team of allTeams) {
-        const { name, points, history } = team;
+        const { name, points,bigTeam, history } = team;
         let hist = ""
         for (let i = 0;i < history.length;i++) {
             hist+=`${history[i]}<br>`
@@ -62,8 +62,9 @@ app.get("/points", async (req, res) => {
             <td>${bigTeam}</td>
             <td>${ctr++}</td>
             <td>${hist}</td>
+            <td>${points}</td>
           </tr>`;
-        if(ctr > 4){
+        if(ctr > 3){
             ctr = 1;
         }
     }
