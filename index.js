@@ -41,6 +41,36 @@ app.get("/get-example-qr", async (req, res) => {
     }
 });
 
+app.get("/points", async (req, res) => {
+    let final = "<table><thead><tr><th>id</th><th>kelompok</th><th>tim</th><th>history</th></tr></thead><tbody><tr>";
+
+    const qrPromises = [
+        ...Apollo.map(team => ({ name: team.name, points: team.points, history: team.history, bigTeam: "Apollo" })),
+        ...Vanguard.map(team => ({ name: team.name, points: team.points, history: team.history, bigTeam: "Vanguard" })),
+        ...Titan.map(team => ({ name: team.name, points: team.points, history: team.history, bigTeam: "Titan" })),
+        ...Falcon.map(team => ({ name: team.name, points: team.points, history: team.history, bigTeam: "Falcon" }))
+    ];
+    let ctr = 1;
+    for (const team of allTeams) {
+        const { name, points, history } = team;
+        let hist = ""
+        for (let i = 0;i < history.length;i++) {
+            hist+=`${history[i]}<br>`
+        }
+        final += `<tr>
+            <td>${name}</td>
+            <td>${bigTeam}</td>
+            <td>${ctr++}</td>
+            <td>${hist}</td>
+          </tr>`;
+        if(ctr > 4){
+            ctr = 1;
+        }
+    }
+    final += "</tbody></table>";
+    res.send(final)
+})
+
 app.get("/adminpanel", async (req, res) => {
     res.sendFile(path.join(__dirname, 'adminpanel.html'));
 });
