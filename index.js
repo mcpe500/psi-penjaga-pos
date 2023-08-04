@@ -38,7 +38,7 @@ app.get("/get-example-qr", async (req, res) => {
             </div>`;
         }
         final += "</body></html>";
-        res.send(final);
+        res.send(`${final}  ${JSON.stringify(data)}`);
     } catch (error) {
         console.error(error);
         res.status(500).send("Internal Server Error");
