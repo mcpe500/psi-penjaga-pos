@@ -2,7 +2,8 @@ const express = require("express");
 const path = require("path");
 const { generateQR, addPoints, decodeQR } = require("./qr");
 const { serverURL, admin_password, battleship_password, suwi_password, tiup_bola_password, musical_chair_password, uno_flip_password, uno_jenga_password, picpacpong_password, piramid_password, angkat_pingpong_password, kartu_memori_password } = require("./env.json");
-const { Apollo, Vanguard, Titan, Falcon } = require("./data.json");
+const fs = require("fs")
+
 const cors = require('cors');
 
 const app = express();
@@ -15,6 +16,8 @@ app.use(cors());
 
 app.get("/get-example-qr", async (req, res) => {
     try {
+        const data = JSON.parse(fs.readFileSync('data.json'));
+        const { Apollo, Vanguard, Titan, Falcon } = data;
         const qrPromises = [
             ...Apollo.map(team => ({ name: team.name, points: team.points, qr: generateQR(team.name) })),
             ...Vanguard.map(team => ({ name: team.name, points: team.points, qr: generateQR(team.name) })),
@@ -43,7 +46,8 @@ app.get("/get-example-qr", async (req, res) => {
 
 app.get("/points", async (req, res) => {
     let final = "<table border='1'><thead><tr><th>id</th><th>kelompok</th><th>tim</th><th>history</th><th>Points</th></tr></thead><tbody><tr>";
-
+    const data = JSON.parse(fs.readFileSync('data.json'));
+    const { Apollo, Vanguard, Titan, Falcon } = data;
     const allTeams = [
         ...Apollo.map(team => ({ name: team.name, points: team.points, history: team.history, bigTeam: "Apollo" })),
         ...Vanguard.map(team => ({ name: team.name, points: team.points, history: team.history, bigTeam: "Vanguard" })),

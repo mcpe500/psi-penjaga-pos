@@ -29,15 +29,13 @@ module.exports = {
                 let smallTeam = id.split("Team")[1];
                 console.log(parsedData);
                 parsedData[bigTeam][smallTeam-1].points += point;
-                parsedData[bigTeam][smallTeam-1].history.append(`${namaPos}\t\t${point}\t=\t${parsedData[bigTeam][smallTeam-1].points}`);
+                parsedData[bigTeam][smallTeam-1].history.push(`${namaPos}\t\t${point}\t=\t${parsedData[bigTeam][smallTeam-1].points}`);
                 console.log(parsedData);
                 fs.writeFile('./data.json', JSON.stringify(parsedData), 'utf8', (err) => {
                     if (err) {
                         console.error(err);
                         return 'Internal Server Error';
                     }
-
-                    // File successfully updated
                     return 'File updated successfully';
                 });
             });
