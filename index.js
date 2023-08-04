@@ -112,45 +112,51 @@ app.get("/data.json", async (req, res) => {
 });
 
 app.post("/adminpanel", async (req, res) => {
-    const { qrCode, winner, password } = req.body;
-    console.log(req.body);
-    let namaPos = "";
-    if (password === battleship_password) {
-        namaPos = "battleship";
-    } else if (password === suwi_password) {
-        namaPos = "suwi";
-    } else if (password === tiup_bola_password) {
-        namaPos = "tiup_bola";
-    } else if (password === musical_chair_password) {
-        namaPos = "musical_chair";
-    } else if (password === uno_flip_password) {
-        namaPos = "uno_flip";
-    } else if (password === uno_jenga_password) {
-        namaPos = "uno_jenga";
-    } else if (password === picpacpong_password) {
-        namaPos = "picpacpong";
-    } else if (password === piramid_password) {
-        namaPos = "piramid";
-    } else if (password === angkat_pingpong_password) {
-        namaPos = "angkat_pingpong";
-    } else if (password === kartu_memori_password) {
-        namaPos = "kartu_memori";
-    }
-    if (password !== admin_password && namaPos === "") {
-        return res.status(400).send("Incorrect password");
-    }
-    let pointsAdd = 0;
-    if (winner == 'win') {
-        pointsAdd = 100;
-    } else if (winner == 'draw') {
-        pointsAdd = 60;
-    } else if (winner == 'lose') {
-        pointsAdd = 40;
-    }
-    addPoints(qrCode, pointsAdd, namaPos);
+    try {
+        const { qrCode, winner, password } = req.body;
+        console.log(req.body);
+        let namaPos = "";
+        if (password === battleship_password) {
+            namaPos = "battleship";
+        } else if (password === suwi_password) {
+            namaPos = "suwi";
+        } else if (password === tiup_bola_password) {
+            namaPos = "tiup_bola";
+        } else if (password === musical_chair_password) {
+            namaPos = "musical_chair";
+        } else if (password === uno_flip_password) {
+            namaPos = "uno_flip";
+        } else if (password === uno_jenga_password) {
+            namaPos = "uno_jenga";
+        } else if (password === picpacpong_password) {
+            namaPos = "picpacpong";
+        } else if (password === piramid_password) {
+            namaPos = "piramid";
+        } else if (password === angkat_pingpong_password) {
+            namaPos = "angkat_pingpong";
+        } else if (password === kartu_memori_password) {
+            namaPos = "kartu_memori";
+        }
+        if (password !== admin_password && namaPos === "") {
+            return res.status(400).send("Incorrect password");
+        }
+        let pointsAdd = 0;
+        if (winner == 'win') {
+            pointsAdd = 100;
+        } else if (winner == 'draw') {
+            pointsAdd = 60;
+        } else if (winner == 'lose') {
+            pointsAdd = 40;
+        }
+        addPoints(qrCode, pointsAdd, namaPos);
 
-    return res.send("Points have been updated");
+        return res.send("Points have been updated");
+    } catch (error) {
+        console.error(error);
+        return res.status(500).send("An error occurred");
+    }
 });
+
 
 const PORT = 3000;
 app.listen(PORT, () => {
