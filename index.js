@@ -77,9 +77,10 @@ app.get("/points", async (req, res) => {
     res.send(final)
 })
 
-app.get("/adminpanel", async (req, res) => {
+app.get("/adminpanel.html", async (req, res) => {
     res.sendFile(path.join(__dirname, 'adminpanel.html'));
 });
+
 app.get("/battleship", async (req, res) => {
     res.sendFile(path.join(__dirname, 'battleship.html'));
 });
