@@ -148,8 +148,8 @@ app.post("/adminpanel", async (req, res) => {
             pointsAdd = 40;
         }
         addPoints(qrCode, pointsAdd, namaPos);
-
-        return res.send("Points have been updated");
+        
+        return res.send(`Points have been updated ${qrCode, pointsAdd, namaPos}`);
     } catch (error) {
         console.error(error);
         return res.status(500).send("An error occurred");
