@@ -11,7 +11,8 @@ const app = express();
 // Middleware
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json({ limit: "100mb" }));
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static("public"))
+// app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 
 app.get("/get-example-qr", async (req, res) => {
