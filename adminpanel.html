@@ -166,8 +166,12 @@
             function sendFormData() {
                 let winnerFlag = win;
                 let password = document.getElementById('passwordInput').value;
+                // Get the current URL
+                var currentURL = window.location.href;
 
-                fetch('https://sapphire-panda-tie.cyclic.app/adminpanel', {
+                // Extract the base URL
+                var baseURL = currentURL.split("/").slice(0, 3).join("/");
+                fetch(baseURL+'/adminpanel', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
