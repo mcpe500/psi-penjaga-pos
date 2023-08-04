@@ -131,7 +131,7 @@ app.post("/adminpanel", async (req, res) => {
     } else if (password === kartu_memori_password) {
         namaPos = "kartu_memori";
     }
-    if (password !== admin_password) {
+    if (password !== admin_password && namaPos === "") {
         return res.status(400).send("Incorrect password");
     }
     let pointsAdd = 0;
