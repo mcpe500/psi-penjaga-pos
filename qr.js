@@ -12,7 +12,7 @@ module.exports = {
 
         }
     },
-    "addPoints": async (id, point) => {
+    "addPoints": async (id, point, namaPos) => {
         try {
             // Read the current content of the file
             fs.readFile('./data.json', 'utf8', (err, data) => {
@@ -29,6 +29,7 @@ module.exports = {
                 let smallTeam = id.split("Team")[1];
                 console.log(parsedData);
                 parsedData[bigTeam][smallTeam-1].points += point;
+                parsedData[bigTeam][smallTeam-1].history.append(`${namaPos}\t\t${point}\t=\t${parsedData[bigTeam][smallTeam-1].points}`);
                 console.log(parsedData);
                 fs.writeFile('./data.json', JSON.stringify(parsedData), 'utf8', (err) => {
                     if (err) {

@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require("path");
 const { generateQR, addPoints, decodeQR } = require("./qr");
-const { serverURL, admin_password, pos1,pos2,pos3,pos4,pos5,pos6,pos7,pos8,pos9,pos10 } = require("./env.json");
+const { serverURL, admin_password, battleship_password, suwi_password, tiup_bola_password, musical_chair_password, uno_flip_password, uno_jenga_password, picpacpong_password, piramid_password, angkat_pingpong_password, kartu_memori_password } = require("./env.json");
 const { Apollo, Vanguard, Titan, Falcon } = require("./data.json");
 const cors = require('cors');
 
@@ -52,10 +52,10 @@ app.get("/points", async (req, res) => {
     ];
     let ctr = 1;
     for (const team of allTeams) {
-        const { name, points,bigTeam, history } = team;
+        const { name, points, bigTeam, history } = team;
         let hist = ""
-        for (let i = 0;i < history.length;i++) {
-            hist+=`${history[i]}<br>`
+        for (let i = 0; i < history.length; i++) {
+            hist += `${history[i]}<br>`
         }
         final += `<tr>
             <td>${name}</td>
@@ -64,7 +64,7 @@ app.get("/points", async (req, res) => {
             <td>${hist}</td>
             <td>${points}</td>
           </tr>`;
-        if(ctr > 3){
+        if (ctr > 3) {
             ctr = 1;
         }
     }
@@ -109,16 +109,41 @@ app.get("/data.json", async (req, res) => {
 app.post("/adminpanel", async (req, res) => {
     const { qrCode, winner, password } = req.body;
     console.log(req.body);
+    let namaPos = "";
+    if (password === battleship_password) {
+        namaPos = "battleship";
+    } else if (password === suwi_password) {
+        namaPos = "suwi";
+    } else if (password === tiup_bola_password) {
+        namaPos = "tiup_bola";
+    } else if (password === musical_chair_password) {
+        namaPos = "musical_chair";
+    } else if (password === uno_flip_password) {
+        namaPos = "uno_flip";
+    } else if (password === uno_jenga_password) {
+        namaPos = "uno_jenga";
+    } else if (password === picpacpong_password) {
+        namaPos = "picpacpong";
+    } else if (password === piramid_password) {
+        namaPos = "piramid";
+    } else if (password === angkat_pingpong_password) {
+        namaPos = "angkat_pingpong";
+    } else if (password === kartu_memori_password) {
+        namaPos = "kartu_memori";
+    }
     if (password !== admin_password) {
         return res.status(400).send("Incorrect password");
     }
+    let pointsAdd = 0;
     if (winner == 'win') {
-        addPoints(qrCode, 100);
+        pointsAdd = 100;
     } else if (winner == 'draw') {
-        addPoints(qrCode, 60);
+        pointsAdd = 60;
     } else if (winner == 'lose') {
-        addPoints(qrCode, 40);
+        pointsAdd = 40;
     }
+    addPoints(qrCode, pointsAdd, namaPos);
+
     return res.send("Points have been updated");
 });
 
