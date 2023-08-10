@@ -15,6 +15,10 @@ app.use(express.static("public"))
 // app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 
+app.get("/", (req, res) => {
+    return res.send("Hello World")
+})
+
 app.get("/get-example-qr", async (req, res) => {
     try {
         const data = JSON.parse(fs.readFileSync('data.json'));
@@ -27,8 +31,7 @@ app.get("/get-example-qr", async (req, res) => {
         ];
 
         const allTeams = await Promise.all(qrPromises);
-
-        let final = "<html><head><style>body { font-family: Arial, sans-serif; }</style></head><body>";
+        let final = `<html><head><style>body { font-family: Arial, sans-serif; }</style></head><body><nav class="navigation"><ul><li><a href="./points">Points</a></li><li><a href="./get-example-qr">QR</a><li><a href="./adminpanel.html">adminpanel</a></li></li></ul></nav>`;
         for (const team of allTeams) {
             const { name, points, qr } = team;
             final += `<div style="margin-bottom: 40px;">
@@ -46,7 +49,7 @@ app.get("/get-example-qr", async (req, res) => {
 });
 
 app.get("/points", async (req, res) => {
-    let final = "<table border='1'><thead><tr><th>id</th><th>kelompok</th><th>tim</th><th>history</th><th>Points</th></tr></thead><tbody><tr>";
+    let final = `<html><head><style>body { font-family: Arial, sans-serif; }</style></head><body><nav class="navigation"><ul><li><a href="./points">Points</a></li><li><a href="./get-example-qr">QR</a><li><a href="./adminpanel.html">adminpanel</a></li></li></ul></nav><table border='1'><thead><tr><th>id</th><th>kelompok</th><th>tim</th><th>history</th><th>Points</th></tr></thead><tbody><tr>`;
     const data = JSON.parse(fs.readFileSync('data.json'));
     const { Apollo, Vanguard, Titan, Falcon } = data;
     const allTeams = [
@@ -73,7 +76,7 @@ app.get("/points", async (req, res) => {
             ctr = 1;
         }
     }
-    final += "</tbody></table>";
+    final += "</tbody></table></body></html>";
     res.send(final)
 })
 
@@ -136,7 +139,7 @@ app.post("/adminpanel", async (req, res) => {
             namaPos = "angkat_pingpong";
         } else if (password === kartu_memori_password) {
             namaPos = "kartu_memori";
-        }else if (password !== admin_password && namaPos === "") {
+        } else if (password !== admin_password && namaPos === "") {
             return res.status(400).send("Incorrect password");
         }
         let pointsAdd = 0;
@@ -148,7 +151,7 @@ app.post("/adminpanel", async (req, res) => {
             pointsAdd = 40;
         }
         addPoints(qrCode, pointsAdd, namaPos);
-        
+
         return res.send(`Points have been updated ${qrCode}, ${pointsAdd}, ${namaPos}`);
     } catch (error) {
         console.error(error);
