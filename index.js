@@ -16,7 +16,7 @@ app.use(express.static("public"))
 app.use(cors());
 
 app.get("/", (req, res) => {
-    return res.send("Hello World")
+    return res.send(`<html><head><style>body { font-family: Arial, sans-serif; }</style></head><body><nav class="navigation"><ul><li><a href="./points">Points</a></li><li><a href="./get-example-qr">QR</a><li><a href="./adminpanel.html">adminpanel</a></li></li></ul></nav></body></html>`)
 })
 
 app.get("/get-example-qr", async (req, res) => {
